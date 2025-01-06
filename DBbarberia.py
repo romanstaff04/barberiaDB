@@ -1,57 +1,41 @@
 import sqlite3 as sql
-def createDb():
-    conn = sql.connect("databaseBarberia")
-    conn.commit()
-    conn.close()
 
-def createTable():
-    conn = sql.connect("databaseBarberia")
+# Crear la tabla de servicios si no existe
+def crear_tabla():
+    conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
-    cursor.execute(
-        """CREATE TABLE servicios (
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS servicios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            fecha TEXT NOT NULL,
-            nombre TEXT NOT NULL,
+            fecha DATETIME NOT NULL,
+            barbero TEXT NOT NULL,
             servicio TEXT NOT NULL,
-            precio INTEGER NOT NULL
-        )"""
-    )
-    print("tabla creada con exito")
-    conn.commit()
-    conn.close()
-
-
-def dropTable():
-    conn = sql.connect("databaseBarberia")
-    cursor = conn.cursor()
-    cursor.execute(
-        """DROP TABLE barberos"""
-    )
-    conn.commit()
-    conn.close()
-
-def insertServicio(fecha, barbero, servicio, precio):
-    conn = sql.connect("databaseBarberia")
-    cursor = conn.cursor()
-    query = """INSERT INTO servicios (fecha, nombre, servicio, precio) 
-                VALUES (?, ?, ?, ?)"""
-    cursor.execute(query, (fecha, barbero, servicio, precio))
-    conn.commit()
-    conn.close()
-
-# Consultar datos
-def consultar():
-    conn = sql.connect("databaseBarberia")
-    cursor = conn.cursor()
-    cursor.execute(
-            """SELECT * FROM servicios """
+            precio REAL NOT NULL
         )
-    resultados = cursor.fetchall()
-    for fila in resultados: #preguntar a chatgpt si resultados esta vacio, imprima: no tenes registros en la base de datos
-        print(fila)
+    """)
     conn.commit()
     conn.close()
 
+# Insertar un servicio en la tabla
+def insertServicio(fecha, barbero, servicio, precio):
+    conn = sql.connect("databaseBarberia.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO servicios (fecha, barbero, servicio, precio)
+        VALUES (?, ?, ?, ?)
+    """, (fecha, barbero, servicio, precio))
+    conn.commit()
+    conn.close()
 
-
-consultar()
+# Consultar servicios de un día específico
+def getServiciosDelDia(fecha):
+    conn = sql.connect("databaseBarberia.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT barbero, servicio, precio, fecha 
+        FROM servicios 
+        WHERE DATE(fecha) = ?
+    """, (fecha,))
+    servicios = cursor.fetchall()
+    conn.close()
+    return servicios
