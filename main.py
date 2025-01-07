@@ -2,16 +2,17 @@ from datetime import datetime  # Obtener la fecha actual
 import sys  # Finalizar el programa en caso de error
 import DBbarberia as db  # Módulo de la base de datos
 class Barberia:
-    servicios = {
+    servicios = { # servicios que realiza la barberia con sus respectivos precios
         "barba": 5000,
         "pelo": 6000,
         "cortebarba": 7000
     }
-    barberos = ["Santiago", "Alejandro2", "Brian", "Ángel", "Alejandro"]
+    barberos = ["Santiago", "Alejandro2", "Brian", "Ángel", "Alejandro"] #nombre barberos
 
     def __init__(self):
         self.cortes_totales = 0
-        self.ingresos_totales = 0
+        self.totalFacturado = 0
+        self.fecha_actual = datetime.now().strftime("%Y-%m-%d")
         db.crear_tabla()  # Asegurar que la tabla existe al iniciar
 
     def menu(self):
@@ -53,13 +54,10 @@ class Barberia:
             if servicio_elegido not in self.servicios:
                 print("Servicio no válido. Intente nuevamente.")
                 return
-
             precio = self.servicios[servicio_elegido]
-            fecha_actual = datetime.now()
-
             confirmacion = input(f"¿Registrar {servicio_elegido} para {barbero_seleccionado} por ${precio}? (s/n): ").lower()
             if confirmacion == "s":
-                db.insertServicio(fecha_actual, barbero_seleccionado, servicio_elegido, precio)
+                db.insertServicio(self.fecha_actual, barbero_seleccionado, servicio_elegido, precio)
                 print("Servicio registrado exitosamente.")
             else:
                 print("Registro cancelado.")
@@ -68,12 +66,19 @@ class Barberia:
 
     def informe_del_dia(self):
         print("\n--- Informe del Día ---")
-        fecha_actual = datetime.now().strftime("%Y-%m-%d")
-        servicios = db.getServiciosDelDia(fecha_actual)
+        servicios = db.getServiciosDelDia(self.fecha_actual)
         if servicios:
-            print(f"Servicios realizados el {fecha_actual}:")
+            print(f"Servicios realizados el {self.fecha_actual}:")
             for barbero, servicio, precio, fecha in servicios:
                 print(f"- Barbero: {barbero}, Servicio: {servicio}, Precio: ${precio}, Fecha: {fecha}")
+                self.totalFacturado += precio #cada servicio aumenta la facturacion
+                self.cortes_totales += 1 #cada servicio aumenta los cortes totales
+            gananciaDueño = self.totalFacturado * 0.6 # calculamos la ganancia del dueño que: del precio del servicio se queda con un 60%
+            print(f"Facturado = {self.totalFacturado}")
+            print(f"Cortes Totales = {self.cortes_totales}")
+            print(f"Ganancia dueño = ${gananciaDueño}")
+            sys.exit()
+            #db.fechaInforme(self.fecha_actual)
         else:
             print("No se registraron servicios hoy.")
 

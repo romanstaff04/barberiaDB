@@ -39,3 +39,11 @@ def getServiciosDelDia(fecha):
     servicios = cursor.fetchall()
     conn.close()
     return servicios
+
+def fechaInforme(fecha):
+    conn = sql.connect("databaseBarberia.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT * FROM servicios WHERE DATE(fecha) = ? """, (fecha,))
+    conn.commit()
+    conn.close()
