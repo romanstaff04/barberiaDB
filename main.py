@@ -1,13 +1,14 @@
 from datetime import datetime  # Obtener la fecha actual
-import sys  # Finalizar el programa en caso de error
+import sys  # forzar a finalizar el programa 
 import DBbarberia as db  # Módulo de la base de datos
+
 class Barberia:
     servicios = { # servicios que realiza la barberia con sus respectivos precios
         "barba": 5000,
         "pelo": 6000,
         "cortebarba": 7000
     }
-    barberos = ["Santiago", "Alejandro2", "Brian", "Ángel", "Alejandro"] #nombre barberos
+    barberos = ["Santiago", "Alejandro2", "Brian", "Ángel", "Alejandro"] #nombres barberos
 
     def __init__(self):
         self.cortes_totales = 0
@@ -21,6 +22,7 @@ class Barberia:
             print("1. Registrar un servicio")
             print("2. Ver informe del día")
             print("3. Salir")
+            print("4. Fin dia laboral")
             opcion = int(input("Ingrese una opción: "))
             if opcion == 1:
                 self.registrar_servicio()
@@ -28,6 +30,9 @@ class Barberia:
                 self.informe_del_dia()
             elif opcion == 3:
                 print("¡Gracias por usar el sistema! Hasta luego.")
+                sys.exit()
+            elif opcion == 4:
+                self.finDiaLaboral()
                 sys.exit()
             else:
                 print("Opción inválida. Intente nuevamente.")
@@ -73,14 +78,22 @@ class Barberia:
                 print(f"- Barbero: {barbero}, Servicio: {servicio}, Precio: ${precio}, Fecha: {fecha}")
                 self.totalFacturado += precio #cada servicio aumenta la facturacion
                 self.cortes_totales += 1 #cada servicio aumenta los cortes totales
-            gananciaDueño = self.totalFacturado * 0.6 # calculamos la ganancia del dueño que: del precio del servicio se queda con un 60%
             print(f"Facturado = {self.totalFacturado}")
             print(f"Cortes Totales = {self.cortes_totales}")
-            print(f"Ganancia dueño = ${gananciaDueño}")
             sys.exit()
-            #db.fechaInforme(self.fecha_actual)
         else:
             print("No se registraron servicios hoy.")
+
+    def finDiaLaboral(self):
+        resultados = db.finDiaLaboral2()
+        if resultados:
+            for fecha, cortes_totales_en_el_dia, total_facturado, ganancia_dueno in resultados:
+                print(f"Fecha: {fecha}")
+                print(f"Cortes Totales: {cortes_totales_en_el_dia}")
+                print(f"Total facturado: ${total_facturado}")
+                print(f"Ganancia del dueño: ${ganancia_dueno}")
+        else:
+            print("no se registraron servicios para el dia de hoy")
 
 
 # Ejecutar el programa

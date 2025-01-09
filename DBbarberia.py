@@ -1,5 +1,5 @@
 import sqlite3 as sql
-
+from datetime import datetime  # Obtener la fecha actual
 # Crear la tabla de servicios si no existe
 def crear_tabla():
     conn = sql.connect("databaseBarberia.db")
@@ -40,10 +40,19 @@ def getServiciosDelDia(fecha):
     conn.close()
     return servicios
 
-def fechaInforme(fecha):
+def finDiaLaboral2():
     conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
+    fecha_actual = datetime.now().strftime("%Y-%m-%d")  # Formato compatible con la base de datos
     cursor.execute("""
-        SELECT * FROM servicios WHERE DATE(fecha) = ? """, (fecha,))
-    conn.commit()
+        SELECT
+            fecha,
+            COUNT(servicio) AS cortes_totales_en_el_dia,
+            SUM(precio) AS total_facturado,
+            SUM(precio) * 0.6 AS ganancia_dueno
+        FROM servicios
+        WHERE fecha = ?;
+    """, (fecha_actual,))
+    resultados = cursor.fetchall()
     conn.close()
+    return resultados
