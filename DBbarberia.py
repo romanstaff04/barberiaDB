@@ -56,3 +56,17 @@ def finDiaLaboral2():
     resultados = cursor.fetchall()
     conn.close()
     return resultados
+
+def detalleServicios():
+    conn = sql.connect("databaseBarberia.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT
+            servicio,
+            COUNT(servicio) as "total"
+            FROM servicios
+            GROUP BY servicio;
+    """)
+    resultados = cursor.fetchall()
+    conn.close()
+    return resultados

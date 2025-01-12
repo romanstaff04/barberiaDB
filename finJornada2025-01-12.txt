@@ -1,0 +1,31 @@
+--- Informe del Día ---
+Fecha: 2025-01-12
+Cortes Totales: 2
+Total Facturado: $10000.00
+Ganancia del Dueño: $6000.00
+------------------------------
+barba2--- Informe del Día ---
+Fecha: 2025-01-12
+Cortes Totales: 3
+Total Facturado: $16000.00
+Ganancia del Dueño: $9600.00
+------------------------------
+barba2pelo1--- Informe del Día ---
+Fecha: 2025-01-12
+Cortes Totales: 3
+Total Facturado: $16000.00
+Ganancia del Dueño: $9600.00
+------------------------------
+barba: 2pelo: 1--- Informe del Día ---
+Fecha: 2025-01-12
+Cortes Totales: 3
+Total Facturado: $16000.00
+Ganancia del Dueño: $9600.00
+------------------------------
+barba: 2pelo: 1--- Informe del Día ---
+Fecha: 2025-01-12
+Cortes Totales: 4
+Total Facturado: $23000.00
+Ganancia del Dueño: $13800.00
+------------------------------
+barba: 2cortebarba: 1pelo: 1

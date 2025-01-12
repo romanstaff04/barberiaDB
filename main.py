@@ -92,9 +92,33 @@ class Barberia:
                 print(f"Cortes Totales: {cortes_totales_en_el_dia}")
                 print(f"Total facturado: ${total_facturado}")
                 print(f"Ganancia del dueño: ${ganancia_dueno}")
+            self.guardarFinDiaLaboralEnTXT()
+            db.detalleServicios()
         else:
             print("no se registraron servicios para el dia de hoy")
 
+
+    def guardarFinDiaLaboralEnTXT(self):
+        resultados = db.finDiaLaboral2()
+        resultados2= db.detalleServicios()
+        if resultados:
+            # Nombre del archivo con la fecha actual
+            nombreArchivo= f"finJornada{datetime.now().strftime('%Y-%m-%d')}.txt"
+            
+            with open(nombreArchivo, "a") as archivo:  # Usa "a" para agregar datos al archivo
+                archivo.write("--- Informe del Día ---\n")
+                for fecha, cortes_totales_en_el_dia, total_facturado, ganancia_dueno in resultados:
+                    archivo.write(f"Fecha: {fecha}\n")
+                    archivo.write(f"Cortes Totales: {cortes_totales_en_el_dia}\n")
+                    archivo.write(f"Total Facturado: ${total_facturado:.2f}\n")
+                    archivo.write(f"Ganancia del Dueño: ${ganancia_dueno:.2f}\n")
+                    archivo.write("------------------------------\n")
+                for servicio, total in resultados2:
+                    archivo.write(f"{servicio}: { total}")
+                    #archivo.write(f"{total}")
+            print(f"Informe del día guardado en {nombreArchivo}.")
+        else:
+            print("No se registraron servicios para el día de hoy.")
 
 # Ejecutar el programa
 if __name__ == "__main__":
