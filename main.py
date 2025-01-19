@@ -21,19 +21,34 @@ class Barberia:
             print("\n--- Menú Principal ---")
             print("1. Registrar un servicio")
             print("2. Ver informe del día")
-            print("3. Salir")
-            print("4. Fin dia laboral")
+            print("3. Anular ultimo servicio")
+            print("4. Salir")
+            print("5. Archivo TXT")
+            print("6. Ganancia Barbero")
             opcion = int(input("Ingrese una opción: "))
             if opcion == 1:
                 self.registrar_servicio()
             elif opcion == 2:
                 self.informe_del_dia()
             elif opcion == 3:
+                self.anularUltimoServicio()
+            elif opcion == 4:
                 print("¡Gracias por usar el sistema! Hasta luego.")
                 sys.exit()
-            elif opcion == 4:
+            elif opcion == 5:
                 self.finDiaLaboral()
                 sys.exit()
+            elif opcion == 6:
+                print("Barberos")
+                print("1. Santiago")
+                print("2. Alejandro2")
+                print("3. Brian")
+                print("4. Angel")
+                print("5. Ale")
+                opcion = int(input("Elija el barbero: "))
+                if opcion < 1 or opcion > 5:
+                    print("Error, Barbero no valido.")
+                break
             else:
                 print("Opción inválida. Intente nuevamente.")
 
@@ -69,6 +84,15 @@ class Barberia:
         except ValueError:
             print("Entrada no válida. Intente nuevamente.")
 
+    def anularUltimoServicio(self):
+        opcion = input("estas seguro que queres anular el ultimo servicio registrado?: s/n").lower()
+        if opcion == "s":
+            db.anularUltimoRegistro()
+            print("anulado correctamente")
+            return
+        print("anulacion cancelada")
+        sys.exit()
+
     def informe_del_dia(self):
         print("\n--- Informe del Día ---")
         servicios = db.getServiciosDelDia(self.fecha_actual)
@@ -93,17 +117,16 @@ class Barberia:
                 print(f"Total facturado: ${total_facturado}")
                 print(f"Ganancia del dueño: ${ganancia_dueno}")
             self.guardarFinDiaLaboralEnTXT()
-            db.detalleServicios()
+            db.detalleServicios() #funcion que contiene una consulta a la DB
         else:
             print("no se registraron servicios para el dia de hoy")
 
 
-    def guardarFinDiaLaboralEnTXT(self):
-        resultados = db.finDiaLaboral2()
-        resultados2= db.detalleServicios()
+    def guardarFinDiaLaboralEnTXT(self): #funcion para guardar el informe de la jornada laboral en un archivo "txt"
+        resultados = db.finDiaLaboral2() #esta funcion contiene una consulta para extraer los datos de la db
+        resultados2= db.detalleServicios() #esta funcion contiene una consulta para extraer los datos de la db
         if resultados:
-            # Nombre del archivo con la fecha actual
-            nombreArchivo= f"finJornada{datetime.now().strftime('%Y-%m-%d')}.txt"
+            nombreArchivo= f"finJornada {datetime.now().strftime('%Y-%m-%d')}.txt" # Nombre del archivo con la fecha actual 
             
             with open(nombreArchivo, "a") as archivo:  # Usa "a" para agregar datos al archivo
                 archivo.write("--- Informe del Día ---\n")
@@ -112,9 +135,9 @@ class Barberia:
                     archivo.write(f"Cortes Totales: {cortes_totales_en_el_dia}\n")
                     archivo.write(f"Total Facturado: ${total_facturado:.2f}\n")
                     archivo.write(f"Ganancia del Dueño: ${ganancia_dueno:.2f}\n")
-                    archivo.write("------------------------------\n")
                 for servicio, total in resultados2:
                     archivo.write(f"{servicio}: { total}")
+                    archivo.write("\n")
                     #archivo.write(f"{total}")
             print(f"Informe del día guardado en {nombreArchivo}.")
         else:

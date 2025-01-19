@@ -27,6 +27,29 @@ def insertServicio(fecha, barbero, servicio, precio):
     conn.commit()
     conn.close()
 
+def anularUltimoRegistro():
+    conn = sql.connect("databaseBarberia.db")
+    cursor = conn.cursor()
+    # Buscar el ID del último registro
+    cursor.execute("""
+        SELECT id 
+        FROM servicios
+        ORDER BY id DESC
+        LIMIT 1
+    """)
+    ultimo_registro = cursor.fetchone()
+    if ultimo_registro:
+        # Eliminar el último registro
+        cursor.execute("""
+            DELETE FROM servicios
+            WHERE id = ?
+        """, (ultimo_registro[0],))
+        conn.commit()
+        print(f"Registro con ID {ultimo_registro[0]} eliminado correctamente.")
+    else:
+        print("No hay registros para eliminar.")
+    conn.close()
+
 # Consultar servicios de un día específico
 def getServiciosDelDia(fecha):
     conn = sql.connect("databaseBarberia.db")
@@ -60,13 +83,15 @@ def finDiaLaboral2():
 def detalleServicios():
     conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
+    fecha_actual = datetime.now().strftime("%Y-%m-%d")  # Formato compatible con la base de datos
     cursor.execute("""
         SELECT
             servicio,
             COUNT(servicio) as "total"
             FROM servicios
+            WHERE fecha = ?
             GROUP BY servicio;
-    """)
+    """, (fecha_actual,))
     resultados = cursor.fetchall()
     conn.close()
     return resultados
