@@ -25,32 +25,34 @@ class Barberia:
             print("4. Salir")
             print("5. Archivo TXT")
             print("6. Ganancia Barbero")
-            opcion = int(input("Ingrese una opción: "))
-            if opcion == 1:
-                self.registrar_servicio()
-            elif opcion == 2:
-                self.informe_del_dia()
-            elif opcion == 3:
-                self.anularUltimoServicio()
-            elif opcion == 4:
-                print("¡Gracias por usar el sistema! Hasta luego.")
-                sys.exit()
-            elif opcion == 5:
-                self.finDiaLaboral()
-                sys.exit()
-            elif opcion == 6:
-                print("Barberos")
-                print("1. Santiago")
-                print("2. Alejandro2")
-                print("3. Brian")
-                print("4. Angel")
-                print("5. Ale")
-                opcion = int(input("Elija el barbero: "))
-                if opcion < 1 or opcion > 5:
-                    print("Error, Barbero no valido.")
+            try:
+                opcion = int(input("Ingrese una opción: "))
+                if opcion == 1:
+                    self.registrar_servicio()
+                elif opcion == 2:
+                    self.informe_del_dia()
+                elif opcion == 3:
+                    self.anularUltimoServicio()
+                elif opcion == 4:
+                    print("¡Gracias por usar el sistema! Hasta luego.")
+                    sys.exit()
+                elif opcion == 5:
+                    self.finDiaLaboral()
+                    sys.exit()
+                elif opcion == 6:
+                    print("Barberos")
+                    print("Santiago")
+                    print("Alejandro2")
+                    print("Brian")
+                    print("Angel")
+                    print("Ale")
+                    opcion = (input("Escriba el nombre del barbero: ")).capitalize() #sirve para que la primera letra del input sea mayuscula
+                    db.gananciaBarbero(opcion, self.fecha_actual) #imprime los servicios y ganancias del barbero elegido
+                    db.gananciaTotalBarbero(opcion)
+                    sys.exit()
+            except ValueError:
+                print("ERROR. ingrese numeros validos")
                 break
-            else:
-                print("Opción inválida. Intente nuevamente.")
 
     def registrar_servicio(self):
         print("\n--- Registrar Servicio ---")
@@ -102,8 +104,9 @@ class Barberia:
                 print(f"- Barbero: {barbero}, Servicio: {servicio}, Precio: ${precio}, Fecha: {fecha}")
                 self.totalFacturado += precio #cada servicio aumenta la facturacion
                 self.cortes_totales += 1 #cada servicio aumenta los cortes totales
-            print(f"Facturado = {self.totalFacturado}")
+            print(f"Facturado = ${self.totalFacturado}")
             print(f"Cortes Totales = {self.cortes_totales}")
+            print(f"Cortes ganancia dueño = ${self.totalFacturado * 0.6}")
             sys.exit()
         else:
             print("No se registraron servicios hoy.")
@@ -121,13 +124,12 @@ class Barberia:
         else:
             print("no se registraron servicios para el dia de hoy")
 
-
     def guardarFinDiaLaboralEnTXT(self): #funcion para guardar el informe de la jornada laboral en un archivo "txt"
         resultados = db.finDiaLaboral2() #esta funcion contiene una consulta para extraer los datos de la db
         resultados2= db.detalleServicios() #esta funcion contiene una consulta para extraer los datos de la db
         if resultados:
             nombreArchivo= f"finJornada {datetime.now().strftime('%Y-%m-%d')}.txt" # Nombre del archivo con la fecha actual 
-            
+    
             with open(nombreArchivo, "a") as archivo:  # Usa "a" para agregar datos al archivo
                 archivo.write("--- Informe del Día ---\n")
                 for fecha, cortes_totales_en_el_dia, total_facturado, ganancia_dueno in resultados:

@@ -27,6 +27,7 @@ def insertServicio(fecha, barbero, servicio, precio):
     conn.commit()
     conn.close()
 
+# ANULAR ULTIMO SERVICIO
 def anularUltimoRegistro():
     conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
@@ -95,3 +96,39 @@ def detalleServicios():
     resultados = cursor.fetchall()
     conn.close()
     return resultados
+
+def gananciaBarbero(barbero, fecha):
+    conn = sql.connect("databaseBarberia.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT 
+	        fecha,
+	        barbero,
+	        servicio,
+	        COUNT(servicio),
+	        SUM(precio) * 0.4 AS "ganancia_barbero"
+        FROM servicios
+        WHERE barbero = ? AND fecha = ?
+        GROUP BY servicio;
+    """, (barbero, fecha))
+    resultado = cursor.fetchall() #devuelve una lista de filas
+    conn.close()
+    if resultado:
+        for fila in resultado: #imprime los resultados de la consulta
+            print(f"Fecha: {fila[0]}, Barbero: {fila[1]}, Servicio {fila[2]}, Total_Servicios {fila[3]}, Ganancia_barbero {fila[4]}")
+    else:
+        print(f"no existen registros para {barbero}")
+
+def gananciaTotalBarbero(barbero):
+    conn = sql.connect("databaseBarberia.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT 
+	        SUM(precio) * 0.4 AS "ganancia_total"
+        FROM servicios
+        WHERE barbero = ?;
+    """, (barbero,))
+    resultado = cursor.fetchone() #devuelve una sola fila
+    conn.close()
+    if resultado:
+        print(f"Total ${resultado}")

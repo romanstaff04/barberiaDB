@@ -1,0 +1,8 @@
+--- Informe del Día ---
+Fecha: 2025-01-20
+Cortes Totales: 5
+Total Facturado: $28000.00
+Ganancia del Dueño: $16800.00
+barba: 3
+cortebarba: 1
+pelo: 1
