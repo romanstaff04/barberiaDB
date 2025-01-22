@@ -1,7 +1,10 @@
 import sqlite3 as sql
 from datetime import datetime  # Obtener la fecha actual
-# Crear la tabla de servicios si no existe
+
 def crear_tabla():
+    """
+    Crea la tabla
+    """
     conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
     cursor.execute("""
@@ -16,8 +19,10 @@ def crear_tabla():
     conn.commit()
     conn.close()
 
-# Insertar un servicio en la tabla
 def insertServicio(fecha, barbero, servicio, precio):
+    """
+    Inserta los servicios a la DB
+    """
     conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
     cursor.execute("""
@@ -27,11 +32,14 @@ def insertServicio(fecha, barbero, servicio, precio):
     conn.commit()
     conn.close()
 
-# ANULAR ULTIMO SERVICIO
+
 def anularUltimoRegistro():
+    """
+    Anula el ultimo servicio registrado
+    """
     conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
-    # Buscar el ID del último registro
+    #Buscar el ID del último registro
     cursor.execute("""
         SELECT id 
         FROM servicios
@@ -51,8 +59,10 @@ def anularUltimoRegistro():
         print("No hay registros para eliminar.")
     conn.close()
 
-# Consultar servicios de un día específico
 def getServiciosDelDia(fecha):
+    """
+    Consulta los servicios de un dia especifico.
+    """
     conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
     cursor.execute("""
@@ -67,7 +77,7 @@ def getServiciosDelDia(fecha):
 def finDiaLaboral2():
     conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
-    fecha_actual = datetime.now().strftime("%Y-%m-%d")  # Formato compatible con la base de datos
+    fecha_actual = datetime.now().strftime("%Y-%m-%d") 
     cursor.execute("""
         SELECT
             fecha,
@@ -84,7 +94,7 @@ def finDiaLaboral2():
 def detalleServicios():
     conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
-    fecha_actual = datetime.now().strftime("%Y-%m-%d")  # Formato compatible con la base de datos
+    fecha_actual = datetime.now().strftime("%Y-%m-%d")
     cursor.execute("""
         SELECT
             servicio,
@@ -98,6 +108,9 @@ def detalleServicios():
     return resultados
 
 def gananciaBarbero(barbero, fecha):
+    """
+    Imprime los servicios realizados por el barbero pero sin la sumatoria total
+    """
     conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
     cursor.execute("""
@@ -120,6 +133,9 @@ def gananciaBarbero(barbero, fecha):
         print(f"no existen registros para {barbero}")
 
 def gananciaTotalBarbero(barbero):
+    """
+    Calcula la ganancia economica total del barbero con la sumatoria (de los servicios que hizo, se queda con un 40%)
+    """
     conn = sql.connect("databaseBarberia.db")
     cursor = conn.cursor()
     cursor.execute("""

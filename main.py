@@ -11,12 +11,18 @@ class Barberia:
     barberos = ["Santiago", "Alejandro2", "Brian", "Ángel", "Alejandro"] #nombres barberos
 
     def __init__(self):
+        """
+        Inicializa los valores predeterminados y asegura que la tabla de la base de datos exista.
+        """
         self.cortes_totales = 0
         self.totalFacturado = 0
         self.fecha_actual = datetime.now().strftime("%Y-%m-%d")
         db.crear_tabla()  # Asegurar que la tabla existe al iniciar
 
     def menu(self):
+        """
+        Muestra el menú principal de la aplicación y gestiona las opciones seleccionadas por el usuario.
+        """
         while True:
             print("\n--- Menú Principal ---")
             print("1. Registrar un servicio")
@@ -55,6 +61,9 @@ class Barberia:
                 break
 
     def registrar_servicio(self):
+        """
+        Permite registrar un servicio realizado, asignándolo a un barbero y guardándolo en la base de datos.
+        """
         print("\n--- Registrar Servicio ---")
         for indice, barbero in enumerate(self.barberos, start=1):
             print(f"{indice}. {barbero}")
@@ -87,6 +96,9 @@ class Barberia:
             print("Entrada no válida. Intente nuevamente.")
 
     def anularUltimoServicio(self):
+        """
+        Permite anular el último servicio registrado en caso de errores o problema con el cliente real.
+        """
         opcion = input("estas seguro que queres anular el ultimo servicio registrado?: s/n").lower()
         if opcion == "s":
             db.anularUltimoRegistro()
@@ -96,6 +108,9 @@ class Barberia:
         sys.exit()
 
     def informe_del_dia(self):
+        """
+        Genera un informe detallado de los servicios realizados durante el día actual.
+        """
         print("\n--- Informe del Día ---")
         servicios = db.getServiciosDelDia(self.fecha_actual)
         if servicios:
@@ -112,6 +127,9 @@ class Barberia:
             print("No se registraron servicios hoy.")
 
     def finDiaLaboral(self):
+        """
+        Genera un informe detallado de como van los registros durante la jornada laboral
+        """
         resultados = db.finDiaLaboral2()
         if resultados:
             for fecha, cortes_totales_en_el_dia, total_facturado, ganancia_dueno in resultados:
@@ -124,12 +142,14 @@ class Barberia:
         else:
             print("no se registraron servicios para el dia de hoy")
 
-    def guardarFinDiaLaboralEnTXT(self): #funcion para guardar el informe de la jornada laboral en un archivo "txt"
+    def guardarFinDiaLaboralEnTXT(self):
+        """
+        Guarda el informe del día laboral en un archivo de texto con detalles de servicios y ganancias.
+        """
         resultados = db.finDiaLaboral2() #esta funcion contiene una consulta para extraer los datos de la db
         resultados2= db.detalleServicios() #esta funcion contiene una consulta para extraer los datos de la db
         if resultados:
             nombreArchivo= f"finJornada {datetime.now().strftime('%Y-%m-%d')}.txt" # Nombre del archivo con la fecha actual 
-    
             with open(nombreArchivo, "a") as archivo:  # Usa "a" para agregar datos al archivo
                 archivo.write("--- Informe del Día ---\n")
                 for fecha, cortes_totales_en_el_dia, total_facturado, ganancia_dueno in resultados:
